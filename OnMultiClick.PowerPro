@@ -1,0 +1,42 @@
+;
+; OnMultiClick v1.0
+; Written by Alex Peters, 9/6/2005
+;
+; Permits separate functionality for bar buttons/tray icons on single clicks,
+; double clicks, triple clicks etc. up to octuple (8) clicks. Can also be
+; applied to hotkeys with the same effect.
+;
+; Usage:
+; .OnMultiClick(1ClickCmd[, 2ClickCmd[, 3ClickCmd[, ...]]])
+; (Optionally modify the TIMEOUT variable, explained and found below)
+;
+; All feedback is encouraged on the PowerPro discussion list:
+;   *  http://groups.yahoo.com/group/power-pro
+;   *  Please share with us how this script is being put to good use!
+; ____________________________________________________________________________
+;
+; The TIMEOUT variable specifies the maximum timeframe in milliseconds between
+; clicks to be regarded as part of a series. If no further clicks are made in
+; this time then the appropriate command is executed.
+;
+    local TIMEOUT = 250
+; ____________________________________________________________________________
+
+    static handle, pass, cmd
+
+    if (handle)
+        handle = Event.destroy(handle)
+
+    pass = pass + 1
+    cmd = arg(pass)
+
+    if (pass != arg(0)) do
+        handle = Event.createMS(TIMEOUT, 1, ?"." ++ scriptName ++ ?"@timeout")
+        quit
+    endIf
+
+@timeout
+
+    handle = 0
+    pass = 0
+    do(cmd)
